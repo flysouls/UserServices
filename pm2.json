@@ -1,0 +1,16 @@
+{
+  "apps" : [
+    {
+      "name"        : "UserService",
+      "script"      : "./app/app.js",
+      "args"        : "NODE_ENV=dev",
+      "log_date_format"  : "YYYY-MM-DD HH:mm Z",
+      "watch"       : false,
+      "node_args"   : "--harmony",
+      "cwd"         : "./",
+      "instances"  : "4",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }]
+}

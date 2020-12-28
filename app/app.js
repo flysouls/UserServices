@@ -1,32 +1,20 @@
 const Koa = require('koa');
-const app = new Koa();
+const middleWares = require('./middleware');
+const routers = require('./router');
 
-const mysqlCLient = require('./database/index');
-
-let mysqlPool = new mysqlCLient();
-
-// logger
-
-app.use(async (ctx, next) => {
-  await next();
-  const rt = ctx.response.get('X-Response-Time');
-  console.log(`${ctx.method} ${ctx.url} - ${rt}`);
+const app = new Koa({
+  proxy: true,
+  maxIpsCount: 1, // 服务器前只有一个代理
 });
 
-// x-response-time
+// 加载中间件
+middleWares.forEach(item => {
+  app.use(item());
+})
 
-app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  ctx.set('X-Response-Time', `${ms}ms`);
-});
-
-// response
-
-app.use(async ctx => {
-  ctx.body = 'Hello World';
-});
+// 加载路由
+routers.forEach(item => {
+  app.use(item);
+})
 
 app.listen(3000);
-console.log('complate');
